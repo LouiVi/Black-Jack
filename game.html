@@ -20,6 +20,7 @@
         <div id="controls">
             <button id="hit">Hit</button>
             <button id="stand">Stand</button>
+            <button id="play_again" disabled="true" onClick="document.location = document.location;">Play again</button>
         </div>
     </div>
 
@@ -34,10 +35,12 @@
         function createDeck() {
             const suits = ['♤','♡','◇','♧']; //'Hearts', 'Diamonds', 'Clubs', 'Spades'
             const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-            for (let suit of suits) {
-                for (let value of values) {
-                    deck.push({ suit, value });
-                }
+            for (let decks = 0; decks < 6; decks++){
+               for (let suit of suits) {
+                   for (let value of values) {
+                       deck.push({ suit, value });
+                   }
+               }
             }
         }
 
@@ -81,8 +84,8 @@
 
         // Update display
         function updateDisplay() {
-            document.getElementById('player-hand').innerHTML = playerHand.map(card => `<div class="card">${card.value} of ${card.suit}</div>`).join('');
-            document.getElementById('dealer-hand').innerHTML = dealerHand.map(card => `<div class="card">${card.value} of ${card.suit}</div>`).join('');
+            document.getElementById('player-hand').innerHTML = playerHand.map(card => `<div class="card">${card.value}${card.suit}</div>`).join('');
+            document.getElementById('dealer-hand').innerHTML = dealerHand.map(card => `<div class="card">${card.value}${card.suit}</div>`).join('');
             playerScore = calculateScore(playerHand);
             dealerScore = calculateScore(dealerHand);
             document.getElementById('result').innerText = `Player Score: ${playerScore} | Dealer Score: ${dealerScore}`;
@@ -95,6 +98,9 @@
             updateDisplay();
             if (playerScore > 21) {
                 document.getElementById('result').innerText = 'You bust! Dealer wins.';
+                document.getElementById("hit").disabled = true;
+                document.getElementById("stand").disabled = true;
+                document.getElementById("play_again").disabled = false;
             }
         }
 
@@ -104,13 +110,23 @@
                 dealerHand.push(deck.pop());
                 dealerScore = calculateScore(dealerHand);
             }
+            
             updateDisplay();
             if (dealerScore > 21 || playerScore > dealerScore) {
                 document.getElementById('result').innerText = 'You win!';
+                document.getElementById("hit").disabled = true;
+                document.getElementById("stand").disabled = true;
+                document.getElementById("play_again").disabled = false;
             } else if (playerScore < dealerScore) {
                 document.getElementById('result').innerText = 'Dealer wins!';
+                document.getElementById("hit").disabled = true;
+                document.getElementById("stand").disabled = true;
+                document.getElementById("play_again").disabled = false;
             } else {
                 document.getElementById('result').innerText = 'It\'s a tie!';
+                document.getElementById("hit").disabled = true;
+                document.getElementById("stand").disabled = true;
+                document.getElementById("play_again").disabled = false;
             }
         }
 
