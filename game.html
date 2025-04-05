@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #game { width: 300px; margin: auto; }
+        .card { display: inline-block; width: 50px; height: 70px; border: 1px solid #000; margin: 5px; text-align: center; line-height: 70px; }
+        #controls { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <h1>Blackjack</h1>
+        <div id="player-hand"></div>
+        <div id="dealer-hand"></div>
+        <div id="result"></div>
+        <div id="controls">
+            <button id="hit">Hit</button>
+            <button id="stand">Stand</button>
+        </div>
+    </div>
+
+    <script>
+        const deck = [];
+        const playerHand = [];
+        const dealerHand = [];
+        let playerScore = 0;
+        let dealerScore = 0;
+
+        // Create a deck of cards
+        function createDeck() {
+            const suits = ['♤','♡','◇','♧']; //'Hearts', 'Diamonds', 'Clubs', 'Spades'
+            const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+        }
+
+        // Shuffle the deck
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        // Calculate score
+        function calculateScore(hand) {
+            let score = 0;
+            let aces = 0;
+            for (let card of hand) {
+                if (card.value === 'A') {
+                    aces++;
+                    score += 11;
+                } else if (['K', 'Q', 'J'].includes(card.value)) {
+                    score += 10;
+                } else {
+                    score += parseInt(card.value);
+                }
+            }
+            while (score > 21 && aces) {
+                score -= 10;
+                aces--;
+            }
+            return score;
+        }
+
+        // Deal cards
+        function dealCards() {
+            for (let i = 0; i < 2; i++) {
+                playerHand.push(deck.pop());
+                dealerHand.push(deck.pop());
+            }
+            updateDisplay();
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('player-hand').innerHTML = playerHand.map(card => `<div class="card">${card.value} of ${card.suit}</div>`).join('');
+            document.getElementById('dealer-hand').innerHTML = dealerHand.map(card => `<div class="card">${card.value} of ${card.suit}</div>`).join('');
+            playerScore = calculateScore(playerHand);
+            dealerScore = calculateScore(dealerHand);
+            document.getElementById('result').innerText = `Player Score: ${playerScore} | Dealer Score: ${dealerScore}`;
+        }
+
+        // Hit function
+        function hit() {
+            playerHand.push(deck.pop());
+            playerScore = calculateScore(playerHand);
+            updateDisplay();
+            if (playerScore > 21) {
+                document.getElementById('result').innerText = 'You bust! Dealer wins.';
+            }
+        }
+
+        // Stand function
+        function stand() {
+            while (dealerScore < 17) {
+                dealerHand.push(deck.pop());
+                dealerScore = calculateScore(dealerHand);
+            }
+            updateDisplay();
+            if (dealerScore > 21 || playerScore > dealerScore) {
+                document.getElementById('result').innerText = 'You win!';
+            } else if (playerScore < dealerScore) {
+                document.getElementById('result').innerText = 'Dealer wins!';
+            } else {
+                document.getElementById('result').innerText = 'It\'s a tie!';
+            }
+        }
+
+        // Initialize game
+        createDeck();
+        shuffleDeck();
+        dealCards();
+
+        document.getElementById('hit').addEventListener('click', hit);
+        document.getElementById('stand').addEventListener('click', stand);
+    </script>
+</body>
+</html>
