@@ -28,7 +28,7 @@ function Home( path, layContent )
     {
         if( show ) {
         	lay.Animate("FadeIn");
-        	self.Tween1();
+        	//self.Tween1();
         	//var i = setInterval(self.RunAnim, 3000);
         } else {
         	lay.Animate( "FadeOut" );
@@ -141,10 +141,13 @@ this.RunAnim = function(){
 
     
     //Create layout for app controls.
-    var lay = app.CreateLayout( "Linear", "FillXY,VCenter" );
+    var lay = app.CreateLayout( "Linear", "Top,FillXY,HCenter" );
     lay.Hide();
     layContent.AddChild( lay );
-    
+    var game = app.CreateWebView( 1, -1 );
+    game.LoadUrl( "game.html" );
+    lay.AddChild( game )
+    /*
     //Add a logo.
 	var img = app.CreateImage( "Img/Hello.png", 0.25 );
 	img.SetPaintColor( "#ff3434" );
@@ -169,5 +172,5 @@ this.RunAnim = function(){
     txt.SetTextColor( "#444444" );
     lay.AddChild( txt );
     self.CreateCardDeck();
-    setInterval(self.HitMe, 50);
+    setInterval(self.HitMe, 50);*/
 }

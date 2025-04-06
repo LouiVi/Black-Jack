@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="ds:/Sys/app.js"></script>
     <title>Blackjack Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Underdog&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; }
-        #game { width: 300px; margin: auto; }
-        .card { display: inline-block; width: 50px; height: 70px; border: 1px solid #000; margin: 5px; text-align: center; line-height: 70px; }
+        body { font-family: "Underdog", system-ui; }
+        #game { width: 320px; margin: auto; }
+        .card { font-family: "Underdog", system-ui; display: inline-block; width: 50px; height: 70px; border: 1px solid #000; margin: 5px; text-align: center; line-height: 70px; -webkit-box-shadow: 2px 2px 7px 1px #4D4D4D; box-shadow: 2px 2px 7px 1px #4D4D4D; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; outline: 1.5px dotted #C53333; outline-offset: -4px; text-shadow: 1px 1px 2px #efefef; background: linear-gradient(to right,  rgba(140,140,140,0.65) 0%,rgba(140,140,140,0) 100%);color: #000000;}
         #controls { margin-top: 20px; }
     </style>
 </head>
@@ -16,26 +20,33 @@
         <h1>Blackjack</h1>
         <div id="player-hand"></div>
         <div id="dealer-hand"></div>
+        <br />
         <div id="result"></div>
+        <div id="allresults"></div>
+        <br />
         <div id="controls">
             <button id="hit">Hit</button>
             <button id="stand">Stand</button>
-            <button id="play_again" disabled="true" onClick="document.location = document.location;">Play again</button>
+            <button id="play_again" disabled="true" onClick="playGame();">Play again</button>
         </div>
     </div>
 
     <script>
-        const deck = [];
-        const playerHand = [];
-        const dealerHand = [];
+    obj = app.LoadJson("BlackJack", ['0', '0'], "BlackJack.txt"  );
+    //alert(JSON.stringify(obj));
+        let deck = [];
+        let playerHand = [];
+        let dealerHand = [];
         let playerScore = 0;
         let dealerScore = 0;
+        let allPlayer = parseInt(obj[0]);
+        let allDealer = parseInt(obj[1]);
 
         // Create a deck of cards
         function createDeck() {
             const suits = ['♤','♡','◇','♧']; //'Hearts', 'Diamonds', 'Clubs', 'Spades'
             const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-            for (let decks = 0; decks < 6; decks++){
+            for (let decks = 0; decks < 60000; decks++){
                for (let suit of suits) {
                    for (let value of values) {
                        deck.push({ suit, value });
@@ -89,6 +100,8 @@
             playerScore = calculateScore(playerHand);
             dealerScore = calculateScore(dealerHand);
             document.getElementById('result').innerText = `Player Score: ${playerScore} | Dealer Score: ${dealerScore}`;
+            document.getElementById('allresults').innerText = `Player Wins: ${allPlayer} | Dealer Wins: ${allDealer}`;
+            app.SaveJson( "BlackJack", [ `${allPlayer}`, `${allDealer}`], "BlackJack.txt");
         }
 
         // Hit function
@@ -97,11 +110,26 @@
             playerScore = calculateScore(playerHand);
             updateDisplay();
             if (playerScore > 21) {
+            		allDealer += 1;
                 document.getElementById('result').innerText = 'You bust! Dealer wins.';
                 document.getElementById("hit").disabled = true;
                 document.getElementById("stand").disabled = true;
                 document.getElementById("play_again").disabled = false;
             }
+        }
+				function playGame() {
+				playerHand = [];
+        dealerHand = [];
+        playerScore = 0;
+        dealerScore = 0;
+			    document.getElementById("hit").disabled = false;
+          document.getElementById("stand").disabled = false;
+          document.getElementById("play_again").disabled = true;
+	        document.getElementById('player-hand').innerHTML = "";//playerHand.map(card => `<div class="card">${card.value}${card.suit}</div>`).join('');
+          document.getElementById('dealer-hand').innerHTML = "";//dealerHand.map(card => `<div class="card">${card.value}${card.suit}</div>`).join('');
+        	shuffleDeck();
+        	dealCards();
+        	app.ShowPopup( deck.length );
         }
 
         // Stand function
@@ -110,14 +138,15 @@
                 dealerHand.push(deck.pop());
                 dealerScore = calculateScore(dealerHand);
             }
-            
             updateDisplay();
             if (dealerScore > 21 || playerScore > dealerScore) {
+                allPlayer += 1;
                 document.getElementById('result').innerText = 'You win!';
                 document.getElementById("hit").disabled = true;
                 document.getElementById("stand").disabled = true;
                 document.getElementById("play_again").disabled = false;
             } else if (playerScore < dealerScore) {
+                allDealer += 1;
                 document.getElementById('result').innerText = 'Dealer wins!';
                 document.getElementById("hit").disabled = true;
                 document.getElementById("stand").disabled = true;
@@ -132,9 +161,11 @@
 
         // Initialize game
         createDeck();
-        shuffleDeck();
-        dealCards();
-
+        if(deck.length > 3){
+        	playGame();
+				}else{
+					document.location = document.location;
+				}
         document.getElementById('hit').addEventListener('click', hit);
         document.getElementById('stand').addEventListener('click', stand);
     </script>
