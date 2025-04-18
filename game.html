@@ -46,7 +46,8 @@
         function createDeck() {
             const suits = ['♤','♡','◇','♧']; //'Hearts', 'Diamonds', 'Clubs', 'Spades'
             const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-            for (let decks = 0; decks < 60000; decks++){
+            const totalPacks = 1;
+            for (let decks = 0; decks < totalPacks; decks++){
                for (let suit of suits) {
                    for (let value of values) {
                        deck.push({ suit, value });
@@ -86,11 +87,17 @@
 
         // Deal cards
         function dealCards() {
-            for (let i = 0; i < 2; i++) {
+        if(deck.length > 6){
+        	   for (let i = 0; i < 2; i++) {
                 playerHand.push(deck.pop());
                 dealerHand.push(deck.pop());
             }
             updateDisplay();
+				}else{
+					createDeck();
+					dealCards();
+				}
+         
         }
 
         // Update display
@@ -129,6 +136,15 @@
           document.getElementById('dealer-hand').innerHTML = "";//dealerHand.map(card => `<div class="card">${card.value}${card.suit}</div>`).join('');
         	shuffleDeck();
         	dealCards();
+    
+        
+            
+         
+        	
+        	
+        	
+        	
+        	
         	app.ShowPopup( deck.length );
         }
 
@@ -161,11 +177,8 @@
 
         // Initialize game
         createDeck();
-        if(deck.length > 3){
-        	playGame();
-				}else{
-					document.location = document.location;
-				}
+        playGame();
+    
         document.getElementById('hit').addEventListener('click', hit);
         document.getElementById('stand').addEventListener('click', stand);
     </script>
