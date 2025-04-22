@@ -166,10 +166,12 @@ function CreateActionBar()
     layMain.AddChild( layHoriz );
     
     //Create menu (hamburger) icon .
-    txtMenu = app.CreateText( "[fa-bars]", -1,-1, "FontAwesome" );
+    /*txtMenu = app.CreateText( "", -1,-1, "FontAwesome" );
     txtMenu.SetPadding( 12,10,12,10, "dip" );
     txtMenu.SetTextSize( 28 );
     txtMenu.SetTextColor( "#eeeeee" );
+    */
+    txtMenu = app.CreateImage( "Img/logo.png", 0.10, -1 );
     txtMenu.SetOnTouchUp( function(){app.OpenDrawer()} );
     layHoriz.AddChild( txtMenu );
     
@@ -179,8 +181,8 @@ function CreateActionBar()
     layHoriz.AddChild( layBarTitle );
     
     //Create title.
-    txtBarTitle = app.CreateText( "Home", -1,-1, "Left" );
-    txtBarTitle.SetMargins(0,10,0,0,"dip");
+    txtBarTitle = app.CreateText( "      Black Jack", -1,-1, "HCenter" );
+    txtBarTitle.SetMargins(0,2,0,0,"dip");
     txtBarTitle.SetTextSize( 22 );
     txtBarTitle.SetTextColor( "#ffffff" );
     layBarTitle.AddChild( txtBarTitle );
